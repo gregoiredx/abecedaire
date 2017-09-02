@@ -60,6 +60,7 @@
                         {{/data}}
                     </tr>
                 </table>
+                
                 <br><br><br>
             {{/tables}}            
         </script>
@@ -68,38 +69,32 @@
 
             function loadTemplate(){
             
-                var model = {tables : []}
-                var tableIndex = 0;
-                var dataIndex = 0;
-                for(currentCharCode = "a".charCodeAt(0); currentCharCode<= "z".charCodeAt(0); currentCharCode++) {
-                    if(typeof model.tables[tableIndex] === "undefined") {
-                        model.tables[tableIndex] = {data: []}
-                    }
-                    var letter = String.fromCharCode(currentCharCode)
+                function letterModel(charCode) {
+                    var letter = String.fromCharCode(charCode)
                     var cursiveColor = (letter == "a" || letter == "e" ||letter == "i" ||letter == "o" ||letter == "u" ||letter == "y") ? "red" : "blue";
-                    model.tables[tableIndex].data[dataIndex] = {letter: letter, upperLetter: letter.toUpperCase(), cursiveColor: cursiveColor}
-                    if(model.tables[tableIndex].data.length == 9) {
-                        tableIndex++;
-                        dataIndex = 0;
-                    } else {
-                        dataIndex++;                    
+                    return {letter: letter, upperLetter: letter.toUpperCase(), cursiveColor: cursiveColor}                
+                }
+                            
+                function tablesModel(firstLetter, lastLetter, nbLettersByTable) {
+                    var tables = [];
+                    var tableIndex = 0;
+                    var dataIndex = 0;
+                    for(var charCode = firstLetter.charCodeAt(0); charCode <= lastLetter.charCodeAt(0); charCode++) {
+                        if(typeof tables[tableIndex] === "undefined") {
+                            tables[tableIndex] = {data: []}
+                        }
+                        tables[tableIndex].data[dataIndex] = letterModel(charCode)
+                        if(tables[tableIndex].data.length == nbLettersByTable) {
+                            tableIndex++;
+                            dataIndex = 0;
+                        } else {
+                            dataIndex++;                    
+                        }
                     }
+                    return tables;
                 }
                 
-/*                
-                
-                for(i=0; i< zCharCode/9+1; i++) {
-                    var start = i * 9;
-                    var end = Math.min(start + 9, zCharCode);
-                    model.tables[i] = {data: []}
-                    for(j=start; j<end; j++) {
-                        var letter = String.fromCharCode(aCharCode + j)
-                        var cursiveColor = (letter == "a" || letter == "e" ||letter == "i" ||letter == "o" ||letter == "u" ||letter == "y") ? "red" : "blue";
-                        model.tables[i].data[j-start] = {letter: letter, upperLetter: letter.toUpperCase(), cursiveColor: cursiveColor}
-                    }
-                }
-*/
-
+                var model = {tables : tablesModel("a", "z", 9)}
                 var template = document.getElementById("template").innerHTML;
                 var output = Mustache.render(template, model);
                 document.body.innerHTML = output;
