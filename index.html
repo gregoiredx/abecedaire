@@ -1,95 +1,98 @@
 <html lang="en">
-  <head>
-     <meta charset="UTF-8">
-    <title>Abécédaire</title>
-    <style>
 
-    @font-face {
-        font-family: crayonFont;
-        src: url(CrayonL.ttf);
-     font-weight: bold;
-     }
-    
-    table {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-
-    td {
-        border-left: 1px solid black;
-        border-collapse: collapse;
-    }
-    
-</style>
-
-    <script type="text/javascript" src="mustache.min.js" ></script>
-    
-<script id="image_template" type="text/html">
-
-    <td align="center" style="width: 3cm; height: 3cm"><img style="max-width: 100%; max-height: 100%;" src="img/{{upperLetter}}.jpg" alt="img {{letter}}"></td>
-
-</script>
-<script id="letter1_template" type="text/html">
-
-    <td align="center" style="font-size: 2cm; 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif; ">{{upperLetter}}</td>
-
-</script>
-<script id="letter2_template" type="text/html">
-
-    <td align="center" style="font-size: 2cm;  	font-family: Helvetica Neue,Helvetica,Arial,sans-serif; ">{{letter}}</td>
-
-</script>
-<script id="letter3_template" type="text/html">
-
-    <td align="center"  style="font-size: 2cm; color: {{cursiveColor}}; font-family: crayonFont; height: 4cm" >{{letter}}</td>
-
-</script>
-
-    <script>
-
-      function loadtemp(){
-        var output = "";
+    <head>
+            
+        <meta charset="UTF-8">
         
-        function showLettersInTable(start, end){
-         var tableOutput ="<table>";
-
-        var data = []
-
-        for( i=start; i< end; i++) {
-            var letter = String.fromCharCode(97 + i)
-            var cursiveColor = (letter == "a" || letter == "e" ||letter == "i" ||letter == "o" ||letter == "u" ||letter == "y") ? "red" : "blue";
-            data[i-start] = {letter: letter, upperLetter: letter.toUpperCase(), cursiveColor: cursiveColor}
-        }
+        <title>Abécédaire</title>
         
-        function renderInTr(templateId) {
-            var trOutput = "<tr>";
-            for( i=0; i< data.length; i++) {
-                var template = document.getElementById(templateId).innerHTML;
-                trOutput += Mustache.render(template, data[i]);
+        <style>
+            @font-face {
+                font-family: crayonFont;
+                src: url(CrayonL.ttf);
+             font-weight: bold;
+             }
+            
+            table {
+                border: 1px solid black;
+                border-collapse: collapse;
             }
-            trOutput += "</tr>";
-            return trOutput;
-        }
 
-        tableOutput += renderInTr('image_template');
-        tableOutput += renderInTr('letter1_template');
-        tableOutput += renderInTr('letter2_template');
-        tableOutput += renderInTr('letter3_template');
+            td {
+                border-left: 1px solid black;
+                border-collapse: collapse;
+            }
+        </style>
 
-
-        tableOutput += "</table><br><br><br>";
-        return tableOutput;
-        }
+        <script type="text/javascript" src="mustache.min.js" ></script>
         
-        output += showLettersInTable(0, 9);
-        output += showLettersInTable(9, 18);
-        output += showLettersInTable(18, 26);
+        <script id="table_template" type="text/html">
 
-        document.getElementById('person').innerHTML = output;
-      }
-    </script>
-  </head>
-  <body onload="loadtemp()" >
-    <p id="person"></p>
-  </body>
+            <table>
+                <tr>
+                    {{#data}}
+                        <td align="center" style="width: 3cm; height: 3cm">
+                            <img style="max-width: 100%; max-height: 100%;" src="img/{{upperLetter}}.jpg" alt="img {{letter}}">
+                        </td>
+                    {{/data}}
+                </tr>
+                <tr>
+                    {{#data}}
+                        <td align="center" style="font-size: 2cm; 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif; ">
+                            {{upperLetter}}
+                        </td>
+                    {{/data}}
+                </tr>
+                <tr>
+                    {{#data}}
+                        <td align="center" style="font-size: 2cm;  	font-family: Helvetica Neue,Helvetica,Arial,sans-serif; ">
+                            {{letter}}
+                        </td>
+                    {{/data}}
+                </tr>
+                <tr>
+                    {{#data}}
+                        <td align="center"  style="font-size: 2cm; color: {{cursiveColor}}; font-family: crayonFont; height: 4cm" >
+                            {{letter}}
+                        </td>
+                    {{/data}}
+                </tr>
+            </table>
+            <br><br><br>
+            
+        </script>
+
+        <script>
+
+          function loadTemplate(){
+            var output = "";
+            
+            function showLettersInTable(start, end){
+                var data = []
+
+                for( i=start; i< end; i++) {
+                    var letter = String.fromCharCode(97 + i)
+                    var cursiveColor = (letter == "a" || letter == "e" ||letter == "i" ||letter == "o" ||letter == "u" ||letter == "y") ? "red" : "blue";
+                    data[i-start] = {letter: letter, upperLetter: letter.toUpperCase(), cursiveColor: cursiveColor}
+                }
+                
+                var tableTemplate = document.getElementById("table_template").innerHTML;
+                return Mustache.render(tableTemplate, {data: data});
+            }
+            
+            output += showLettersInTable(0, 9);
+            output += showLettersInTable(9, 18);
+            output += showLettersInTable(18, 26);
+
+            document.body.innerHTML = output;
+          }
+
+        </script>
+    
+    </head>
+  
+    <body onload="loadTemplate()" >
+
+    </body>
+
 </html>
